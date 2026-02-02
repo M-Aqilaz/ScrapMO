@@ -1,0 +1,36 @@
+{
+  "name": "universal-news-scraper",
+  "version": "2.0.0",
+  "description": "A simple web app to scrape news articles and save to PostgreSQL database.",
+  "main": "index.js",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node index.js",
+    "pm2:start": "pm2 start ecosystem.config.js --env production",
+    "pm2:stop": "pm2 stop news-scraper",
+    "pm2:restart": "pm2 restart news-scraper",
+    "pm2:logs": "pm2 logs news-scraper",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "scraper",
+    "news",
+    "puppeteer",
+    "express",
+    "postgresql"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.4",
+    "cors": "^2.8.6",
+    "dotenv": "^16.3.1",
+    "express": "^4.22.1",
+    "moment": "^2.30.1",
+    "pg": "^8.11.3",
+    "puppeteer": "^21.11.0"
+  }
+}

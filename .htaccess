@@ -1,0 +1,21 @@
+# Node.js App - Apache Reverse Proxy Configuration
+# =================================================
+# File ini digunakan jika Anda menggunakan shared hosting dengan cPanel/Apache
+# Letakkan file ini di folder public_html atau root domain Anda
+
+# Enable Rewrite Engine
+RewriteEngine On
+
+# Redirect all requests to Node.js app running on port 3001
+# Ubah port sesuai dengan yang digunakan aplikasi Anda
+RewriteRule ^(.*)$ http://localhost:3001/$1 [P,L]
+
+# Jika menggunakan HTTPS, tambahkan:
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Alternative: Jika hosting mendukung Passenger/Node.js native
+# Uncomment baris di bawah dan hapus RewriteRule di atas
+# PassengerEnabled On
+# PassengerAppType node
+# PassengerStartupFile server.js

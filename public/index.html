@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal News Scraper - Cyber Edition</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --cyber-black: #0a0a0f;
+            --cyber-dark: #12121a;
+            --cyber-gray: #1a1a2e;
+            --cyber-blue: #00d4ff;
+            --cyber-purple: #9d00ff;
+            --cyber-pink: #ff00a0;
+            --cyber-green: #00ff88;
+            --cyber-yellow: #ffe600;
+            --cyber-red: #ff3366;
+            --glow-blue: 0 0 20px rgba(0, 212, 255, 0.5);
+            --glow-purple: 0 0 20px rgba(157, 0, 255, 0.5);
+            --glow-pink: 0 0 20px rgba(255, 0, 160, 0.5);
+            --glow-green: 0 0 20px rgba(0, 255, 136, 0.5);
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--cyber-black);
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Animated Grid Background */
+        .cyber-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes gridMove {
+            0% {
+                transform: perspective(500px) rotateX(60deg) translateY(0);
+            }
+
+            100% {
+                transform: perspective(500px) rotateX(60deg) translateY(50px);
+            }
+        }
+
+        /* Floating Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--cyber-blue);
+            border-radius: 50%;
+            box-shadow: var(--glow-blue);
+            animation: float 15s infinite;
+        }
+
+        .particle:nth-child(odd) {
+            background: var(--cyber-purple);
+            box-shadow: var(--glow-purple);
+        }
+
+        .particle:nth-child(3n) {
+            background: var(--cyber-pink);
+            box-shadow: var(--glow-pink);
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Main Container */
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* Cyber Panel */
+        .cyber-panel {
+            background: linear-gradient(135deg, rgba(18, 18, 26, 0.95), rgba(26, 26, 46, 0.9));
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cyber-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--cyber-blue), var(--cyber-purple), var(--cyber-pink), transparent);
+            animation: scanline 3s linear infinite;
+        }
+
+        .cyber-panel::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.1), transparent);
+            animation: shine 4s infinite;
+        }
+
+        @keyframes scanline {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        @keyframes shine {
+            0% {
+                left: -100%;
+            }
+
+            50%,
+            100% {
+                left: 100%;
+            }
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 2.5rem 2rem;
+        }
+
+        .logo-container {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--cyber-dark), var(--cyber-gray));
+            border: 2px solid var(--cyber-blue);
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            position: relative;
+            box-shadow: var(--glow-blue), inset 0 0 20px rgba(0, 212, 255, 0.1);
+        }
+
+        .logo-container::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border: 1px solid rgba(157, 0, 255, 0.5);
+            border-radius: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 0.5;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+        }
+
+        .logo-icon {
+            font-size: 2.5rem;
+            filter: drop-shadow(0 0 10px var(--cyber-blue));
+        }
+
+        .title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            background: linear-gradient(90deg, var(--cyber-blue), var(--cyber-purple), var(--cyber-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+        }
+
+        .subtitle {
+            font-family: 'Share Tech Mono', monospace;
+            color: rgba(0, 212, 255, 0.7);
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+        }
+
+        /* Form */
+        .form-container {
+            padding: 0 2rem 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--cyber-blue);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .cyber-input {
+            width: 100%;
+            padding: 1rem 1.25rem;
+
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 4px;
+            color: #fff;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .cyber-input:focus {
+            border-color: var(--cyber-blue);
+            box-shadow: var(--glow-blue), inset 0 0 20px rgba(0, 212, 255, 0.1);
+        }
+
+        .cyber-input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        /* Buttons */
+        .btn-container {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .cyber-btn {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .cyber-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .cyber-btn:hover::before {
+            left: 100%;
+        }
+
+        .cyber-btn-primary {
+            background: linear-gradient(135deg, var(--cyber-blue), var(--cyber-purple));
+            color: #fff;
+            box-shadow: var(--glow-blue);
+        }
+
+        .cyber-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.7), 0 0 60px rgba(157, 0, 255, 0.4);
+        }
+
+        .cyber-btn-secondary {
+            background: transparent;
+            color: var(--cyber-green);
+            border: 1px solid var(--cyber-green);
+        }
+
+        .cyber-btn-secondary:hover {
+            background: rgba(0, 255, 136, 0.1);
+            box-shadow: var(--glow-green);
+            transform: translateY(-2px);
+        }
+
+        .cyber-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* Status */
+        .status-panel {
+            margin-top: 1.5rem;
+            padding: 1rem 1.5rem;
+            border-radius: 4px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.9rem;
+            display: none;
+            border: 1px solid;
+        }
+
+        .status-panel.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .status-info {
+            background: rgba(0, 212, 255, 0.1);
+            border-color: var(--cyber-blue);
+            color: var(--cyber-blue);
+        }
+
+        .status-success {
+            background: rgba(0, 255, 136, 0.1);
+            border-color: var(--cyber-green);
+            color: var(--cyber-green);
+        }
+
+        .status-error {
+            background: rgba(255, 51, 102, 0.1);
+            border-color: var(--cyber-red);
+            color: var(--cyber-red);
+        }
+
+        .status-loading {
+            background: rgba(157, 0, 255, 0.1);
+            border-color: var(--cyber-purple);
+            color: var(--cyber-purple);
+        }
+
+        /* Stats Panel */
+        .stats-panel {
+            padding: 1.5rem 2rem;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .panel-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            color: var(--cyber-blue);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .panel-btn {
+            background: transparent;
+            border: 1px solid rgba(0, 212, 255, 0.5);
+            color: var(--cyber-blue);
+            padding: 0.5rem 1rem;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.8rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .panel-btn:hover {
+            background: rgba(0, 212, 255, 0.1);
+            box-shadow: var(--glow-blue);
+        }
+
+        .panel-btn.danger {
+            border-color: var(--cyber-red);
+            color: var(--cyber-red);
+        }
+
+        .panel-btn.danger:hover {
+            background: rgba(255, 51, 102, 0.1);
+            box-shadow: 0 0 20px rgba(255, 51, 102, 0.5);
+        }
+
+        /* Stats Display */
+        .stats-display {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .stats-number {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4rem;
+            font-weight: 900;
+            background: linear-gradient(90deg, var(--cyber-blue), var(--cyber-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 40px rgba(0, 212, 255, 0.5);
+            line-height: 1;
+        }
+
+        .stats-label {
+            font-family: 'Share Tech Mono', monospace;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.85rem;
+        }
+
+        /* Data Table */
+        .data-table-container {
+            max-height: 400px;
+            overflow-y: auto;
+            border-radius: 4px;
+        }
+
+        .data-table-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .data-table-container::-webkit-scrollbar-track {
+            background: var(--cyber-dark);
+        }
+
+        .data-table-container::-webkit-scrollbar-thumb {
+            background: var(--cyber-blue);
+            border-radius: 3px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            position: sticky;
+            top: 0;
+            background: var(--cyber-gray);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--cyber-blue);
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 2px solid var(--cyber-blue);
+        }
+
+        .data-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.1);
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        .data-table tr:hover td {
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .data-table a {
+            color: var(--cyber-purple);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .data-table a:hover {
+            color: var(--cyber-pink);
+            text-shadow: 0 0 10px var(--cyber-pink);
+        }
+
+        .data-table .date-cell {
+            font-family: 'Share Tech Mono', monospace;
+            color: var(--cyber-green);
+            white-space: nowrap;
+            font-size: 0.85rem;
+        }
+
+        /* No Data */
+        .no-data {
+            text-align: center;
+            padding: 3rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .no-data-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 1.5rem;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.75rem;
+            color: rgba(0, 212, 255, 0.5);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* Hidden */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Spinner */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .title {
+                font-size: 1.5rem;
+                letter-spacing: 2px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-container {
+                flex-direction: column;
+            }
+
+            .stats-number {
+                font-size: 3rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Background Effects -->
+    <div class="cyber-grid"></div>
+    <div class="particles">
+        <div class="particle" style="left: 10%; animation-delay: 0s; animation-duration: 12s;"></div>
+        <div class="particle" style="left: 20%; animation-delay: 2s; animation-duration: 14s;"></div>
+        <div class="particle" style="left: 30%; animation-delay: 4s; animation-duration: 16s;"></div>
+        <div class="particle" style="left: 40%; animation-delay: 1s; animation-duration: 13s;"></div>
+        <div class="particle" style="left: 50%; animation-delay: 3s; animation-duration: 15s;"></div>
+        <div class="particle" style="left: 60%; animation-delay: 5s; animation-duration: 11s;"></div>
+        <div class="particle" style="left: 70%; animation-delay: 2.5s; animation-duration: 17s;"></div>
+        <div class="particle" style="left: 80%; animation-delay: 1.5s; animation-duration: 14s;"></div>
+        <div class="particle" style="left: 90%; animation-delay: 4.5s; animation-duration: 12s;"></div>
+    </div>
+
+    <div class="container">
+        <!-- Main Panel -->
+        <div class="cyber-panel">
+            <div class="header">
+                <div class="logo-container">
+                    <span class="logo-icon">📰</span>
+                </div>
+                <h1 class="title">News Scraper</h1>
+            </div>
+
+            <div class="form-container">
+                <form id="scrapeForm">
+                    <div class="form-group">
+                        <label class="form-label">Target URL</label>
+                        <input type="url" id="url" class="cyber-input" required
+                            placeholder="https://tribunnews.com/...">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Start Date</label>
+                            <input type="date" id="startDate" class="cyber-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">End Date</label>
+                            <input type="date" id="endDate" class="cyber-input" required>
+                        </div>
+                    </div>
+
+                    <div class="btn-container">
+                        <button type="submit" id="btnSubmit" class="cyber-btn cyber-btn-primary">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" />
+                            </svg>
+                            Execute Scrape
+                        </button>
+                        <button type="button" id="btnViewData" class="cyber-btn cyber-btn-secondary">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                <circle cx="12" cy="12" r="3" />
+                            </svg>
+                            View Data
+                        </button>
+                    </div>
+                </form>
+
+                <div id="status" class="status-panel"></div>
+            </div>
+        </div>
+
+        <!-- Stats Panel -->
+        <div id="statsCard" class="cyber-panel hidden">
+            <div class="stats-panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">
+                        <span>📊</span> Database Stats
+                    </h2>
+                    <button id="btnRefreshStats" class="panel-btn">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path
+                                d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" />
+                        </svg>
+                        Refresh
+                    </button>
+                </div>
+                <div id="statsContent" class="stats-display">
+                    <div class="stats-number">0</div>
+                    <div class="stats-label">Total Articles Stored</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Panel -->
+        <div id="dataCard" class="cyber-panel hidden">
+            <div class="stats-panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">
+                        <span>📋</span> Data Archive
+                    </h2>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button id="btnDeleteAll" class="panel-btn danger">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <polyline points="3,6 5,6 21,6" />
+                                <path d="M19,6v14a2,2,0,01-2,2H7a2,2,0,01-2-2V6m3,0V4a2,2,0,012-2h4a2,2,0,012,2v2" />
+                            </svg>
+                            Purge All
+                        </button>
+                        <button id="btnCloseData" class="panel-btn">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18" />
+                                <line x1="6" y1="6" x2="18" y2="18" />
+                            </svg>
+                            Close
+                        </button>
+                    </div>
+                </div>
+
+                <div class="data-table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dataTableBody">
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="noDataMessage" class="no-data hidden">
+                    <div class="no-data-icon">🗃️</div>
+                    <p>No data in archive</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer"></div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+
+        function showStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = `status-panel show status-${type}`;
+            statusDiv.innerHTML = message;
+        }
+
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_BASE}/api/stats`);
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('statsCard').classList.remove('hidden');
+                    document.getElementById('statsContent').innerHTML = `
+                        <div class="stats-number">${data.total_articles}</div>
+                        <div class="stats-label">Total Articles Stored</div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Failed to load stats:', error);
+            }
+        }
+
+        async function loadArticles() {
+            try {
+                const response = await fetch(`${API_BASE}/api/articles`);
+                const data = await response.json();
+
+                const dataCard = document.getElementById('dataCard');
+                const tableBody = document.getElementById('dataTableBody');
+                const noDataMessage = document.getElementById('noDataMessage');
+
+                dataCard.classList.remove('hidden');
+
+                if (data.success && data.data.length > 0) {
+                    noDataMessage.classList.add('hidden');
+                    tableBody.innerHTML = data.data.map(article => `
+                        <tr>
+                            <td>
+                                <a href="${article.url}" target="_blank">${article.title}</a>
+                            </td>
+                            <td class="date-cell">${article.publish_date}</td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tableBody.innerHTML = '';
+                    noDataMessage.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Failed to load articles:', error);
+                showStatus(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function deleteAllArticles() {
+            if (!confirm('⚠️ WARNING: This will permanently delete ALL articles. Continue?')) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/api/articles`, { method: 'DELETE' });
+                const data = await response.json();
+
+                if (data.success) {
+                    showStatus(`✅ ${data.message}`, 'success');
+                    loadArticles();
+                    loadStats();
+                }
+            } catch (error) {
+                showStatus(`❌ Delete failed: ${error.message}`, 'error');
+            }
+        }
+
+        document.getElementById('scrapeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const url = document.getElementById('url').value;
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const btn = document.getElementById('btnSubmit');
+
+            btn.disabled = true;
+            const originalContent = btn.innerHTML;
+            btn.innerHTML = `<span class="spinner"></span> Processing...`;
+
+            showStatus(`🔄 Initializing extraction protocol... This may take 1-2 minutes.`, 'loading');
+
+            try {
+                const response = await fetch(`${API_BASE}/api/scrape`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url, startDate, endDate })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'System error occurred');
+                }
+
+                showStatus(`✅ ${data.message}`, 'success');
+                loadStats();
+                loadArticles();
+
+            } catch (error) {
+                showStatus(`❌ Extraction failed: ${error.message}`, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalContent;
+            }
+        });
+
+        document.getElementById('btnViewData').addEventListener('click', () => {
+            loadStats();
+            loadArticles();
+        });
+
+        document.getElementById('btnRefreshStats').addEventListener('click', loadStats);
+        document.getElementById('btnDeleteAll').addEventListener('click', deleteAllArticles);
+        document.getElementById('btnCloseData').addEventListener('click', () => {
+            document.getElementById('dataCard').classList.add('hidden');
+            document.getElementById('statsCard').classList.add('hidden');
+        });
+
+        // Load stats on page load
+        loadStats();
+    </script>
+</body>
+
+</html>
