@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RSS Source - News Scraper</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap"
+        rel="stylesheet">
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="/css/media.css">
+    <style>
+        /* Additional styles for RSS Source page */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 2fr 100px;
+            gap: 1rem;
+            align-items: end;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 51, 102, 0.3);
+            border: 1px solid var(--cyber-red);
+            border-radius: 26px;
+            transition: all 0.3s;
+        }
+
+        .toggle-slider::before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background: var(--cyber-red);
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .toggle-switch input:checked+.toggle-slider {
+            background: rgba(0, 255, 136, 0.3);
+            border-color: var(--cyber-green);
+        }
+
+        .toggle-switch input:checked+.toggle-slider::before {
+            transform: translateX(24px);
+            background: var(--cyber-green);
+        }
+
+        .toggle-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+
+        .status-active {
+            background: rgba(0, 255, 136, 0.2);
+            color: var(--cyber-green);
+            border: 1px solid var(--cyber-green);
+        }
+
+        .status-inactive {
+            background: rgba(255, 51, 102, 0.2);
+            color: var(--cyber-red);
+            border: 1px solid var(--cyber-red);
+        }
+
+        .btn-toggle {
+            border-color: var(--cyber-blue);
+            color: var(--cyber-blue);
+        }
+
+        .btn-toggle:hover {
+            background: rgba(0, 212, 255, 0.1);
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+
+        .description-cell {
+            max-width: 200px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.85rem;
+        }
+
+        .region-cell {
+            color: var(--cyber-purple);
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+
+            .form-grid,
+            .form-grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Background Effects -->
+    <div class="cyber-grid"></div>
+    <div class="particles">
+        <div class="particle" style="left: 10%; animation-delay: 0s; animation-duration: 12s;"></div>
+        <div class="particle" style="left: 20%; animation-delay: 2s; animation-duration: 14s;"></div>
+        <div class="particle" style="left: 30%; animation-delay: 4s; animation-duration: 16s;"></div>
+        <div class="particle" style="left: 40%; animation-delay: 1s; animation-duration: 13s;"></div>
+        <div class="particle" style="left: 50%; animation-delay: 3s; animation-duration: 15s;"></div>
+        <div class="particle" style="left: 60%; animation-delay: 5s; animation-duration: 11s;"></div>
+        <div class="particle" style="left: 70%; animation-delay: 2.5s; animation-duration: 17s;"></div>
+        <div class="particle" style="left: 80%; animation-delay: 1.5s; animation-duration: 14s;"></div>
+        <div class="particle" style="left: 90%; animation-delay: 4.5s; animation-duration: 12s;"></div>
+    </div>
+
+    <div class="container">
+        <!-- Main Panel -->
+        <div class="cyber-panel">
+            <div class="header">
+                <div class="header-buttons">
+                    <a href="/" class="nav-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                            <polyline points="9,22 9,12 15,12 15,22" />
+                        </svg>
+                        Home
+                    </a>
+                    <button id="btnLogout" class="nav-btn danger">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" />
+                        </svg>
+                        Logout
+                    </button>
+                </div>
+                <div class="logo-container">
+                    <span class="logo-icon">📡</span>
+                </div>
+                <h1 class="title">RSS Source</h1>
+                <p class="subtitle">// MANAGE NEWS SOURCES BY REGION //</p>
+            </div>
+
+            <!-- Add/Edit Form -->
+            <div class="form-container">
+                <form id="rssForm">
+                    <input type="hidden" id="editId" value="">
+
+                    <div class="form-grid" style="margin-bottom: 1rem;">
+                        <div class="form-group">
+                            <label class="form-label">Provinsi / Region</label>
+                            <select id="province" class="cyber-input" required>
+                                <option value="">-- Pilih Provinsi --</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Status</label>
+                            <div class="toggle-label" style="height: 100%; padding-top: 0.5rem;">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="isActive">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <span id="statusLabel">Inactive</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label class="form-label">URL</label>
+                        <input type="url" id="url" class="cyber-input" required placeholder="https://example.com/news">
+                    </div>
+
+                    <div class="form-grid-3">
+                        <div class="form-group">
+                            <label class="form-label">Deskripsi</label>
+                            <input type="text" id="description" class="cyber-input" placeholder="Berita dari...">
+                        </div>
+                        <div></div>
+                        <button type="submit" id="btnSubmit" class="cyber-btn cyber-btn-primary">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19" />
+                                <line x1="5" y1="12" x2="19" y2="12" />
+                            </svg>
+                            <span id="btnText">Tambah</span>
+                        </button>
+                    </div>
+                </form>
+                <div id="status" class="status-panel"></div>
+            </div>
+        </div>
+
+        <!-- Data Table Panel -->
+        <div class="cyber-panel">
+            <div class="table-container">
+                <div class="panel-header">
+                    <h2 class="panel-title">
+                        <span>📋</span> Daftar RSS Source (<span id="totalCount">0</span>)
+                    </h2>
+                </div>
+
+                <div class="data-table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Region</th>
+                                <th>URL</th>
+                                <th>Deskripsi</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dataTableBody">
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="noDataMessage" class="no-data hidden">
+                    <div class="no-data-icon">📡</div>
+                    <p>Belum ada RSS source terdaftar</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal-overlay">
+        <div class="modal">
+            <h3 class="modal-title">⚠️ Konfirmasi Hapus</h3>
+            <p>Apakah Anda yakin ingin menghapus RSS source "<span id="deleteSourceName"></span>"?</p>
+            <div class="modal-actions">
+                <button id="btnCancelDelete" class="btn-cancel">Batal</button>
+                <button id="btnConfirmDelete" class="cyber-btn cyber-btn-primary"
+                    style="background: linear-gradient(135deg, var(--cyber-red), var(--cyber-pink)); flex: 0;">Hapus</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let deleteId = null;
+        let provinces = [];
+
+        function showStatus(message, type = 'success') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = `status-panel show status-${type}`;
+            statusDiv.innerHTML = message;
+            setTimeout(() => {
+                statusDiv.classList.remove('show');
+            }, 3000);
+        }
+
+        // Toggle status label
+        document.getElementById('isActive').addEventListener('change', (e) => {
+            document.getElementById('statusLabel').textContent = e.target.checked ? 'Active' : 'Inactive';
+        });
+
+        // Load provinces for dropdown
+        async function loadProvinces() {
+            try {
+                const response = await fetch('/api/rss-source/provinces');
+                const data = await response.json();
+
+                if (data.success) {
+                    provinces = data.data;
+                    const select = document.getElementById('province');
+                    select.innerHTML = '<option value="">-- Pilih Provinsi --</option>';
+                    provinces.forEach(p => {
+                        const option = document.createElement('option');
+                        option.value = p.id;
+                        option.textContent = p.region;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Failed to load provinces:', error);
+            }
+        }
+
+        // Load RSS sources
+        async function loadSources() {
+            try {
+                const response = await fetch('/api/rss-source');
+                const data = await response.json();
+
+                const tableBody = document.getElementById('dataTableBody');
+                const noDataMessage = document.getElementById('noDataMessage');
+                const totalCount = document.getElementById('totalCount');
+
+                totalCount.textContent = data.total || 0;
+
+                if (data.success && data.data.length > 0) {
+                    noDataMessage.classList.add('hidden');
+                    tableBody.innerHTML = data.data.map(source => `
+                        <tr>
+                            <td class="region-cell">${source.region}</td>
+                            <td><a href="${source.url}" target="_blank">${source.url}</a></td>
+                            <td class="description-cell" title="${source.description || ''}">${source.description || '-'}</td>
+                            <td>
+                                <span class="status-badge ${source.is_active ? 'status-active' : 'status-inactive'}">
+                                    ${source.is_active ? 'Active' : 'Inactive'}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="action-btns">
+                                    <button class="btn-icon btn-toggle" onclick="toggleActive(${source.id})" title="Toggle Status">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <circle cx="12" cy="12" r="10"/>
+                                            <path d="M12 6v6l4 2"/>
+                                        </svg>
+                                    </button>
+                                    <button class="btn-icon btn-edit" onclick="editSource(${source.id}, ${source.province_id}, '${escapeHtml(source.url)}', '${escapeHtml(source.description || '')}', ${source.is_active})" title="Edit">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                                            <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                        </svg>
+                                    </button>
+                                    <button class="btn-icon btn-delete" onclick="confirmDelete(${source.id}, '${escapeHtml(source.region)}')" title="Hapus">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="3,6 5,6 21,6"/>
+                                            <path d="M19,6v14a2,2,0,01-2,2H7a2,2,0,01-2-2V6m3,0V4a2,2,0,012-2h4a2,2,0,012,2v2"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tableBody.innerHTML = '';
+                    noDataMessage.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Failed to load sources:', error);
+                showStatus(`❌ Gagal memuat data: ${error.message}`, 'error');
+            }
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML.replace(/'/g, "\\'");
+        }
+
+        function editSource(id, provinceId, url, description, isActive) {
+            document.getElementById('editId').value = id;
+            document.getElementById('province').value = provinceId;
+            document.getElementById('url').value = url;
+            document.getElementById('description').value = description;
+            document.getElementById('isActive').checked = isActive;
+            document.getElementById('statusLabel').textContent = isActive ? 'Active' : 'Inactive';
+            document.getElementById('btnText').textContent = 'Update';
+            document.getElementById('province').focus();
+        }
+
+        function resetForm() {
+            document.getElementById('editId').value = '';
+            document.getElementById('province').value = '';
+            document.getElementById('url').value = '';
+            document.getElementById('description').value = '';
+            document.getElementById('isActive').checked = false;
+            document.getElementById('statusLabel').textContent = 'Inactive';
+            document.getElementById('btnText').textContent = 'Tambah';
+        }
+
+        async function toggleActive(id) {
+            try {
+                const response = await fetch(`/api/rss-source/${id}/toggle`, { method: 'PATCH' });
+                const data = await response.json();
+
+                if (data.success) {
+                    showStatus(`✅ ${data.message}`, 'success');
+                    loadSources();
+                } else {
+                    showStatus(`❌ ${data.message}`, 'error');
+                }
+            } catch (error) {
+                showStatus(`❌ Gagal mengubah status: ${error.message}`, 'error');
+            }
+        }
+
+        function confirmDelete(id, region) {
+            deleteId = id;
+            document.getElementById('deleteSourceName').textContent = region;
+            document.getElementById('deleteModal').classList.add('show');
+        }
+
+        async function deleteSource() {
+            if (!deleteId) return;
+
+            try {
+                const response = await fetch(`/api/rss-source/${deleteId}`, { method: 'DELETE' });
+                const data = await response.json();
+
+                if (data.success) {
+                    showStatus('✅ RSS source berhasil dihapus', 'success');
+                    loadSources();
+                } else {
+                    showStatus(`❌ ${data.message}`, 'error');
+                }
+            } catch (error) {
+                showStatus(`❌ Gagal menghapus: ${error.message}`, 'error');
+            } finally {
+                document.getElementById('deleteModal').classList.remove('show');
+                deleteId = null;
+            }
+        }
+
+        // Form submit
+        document.getElementById('rssForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const editId = document.getElementById('editId').value;
+            const province_id = document.getElementById('province').value;
+            const url = document.getElementById('url').value;
+            const description = document.getElementById('description').value;
+            const is_active = document.getElementById('isActive').checked;
+
+            const isEdit = editId !== '';
+            const apiUrl = isEdit ? `/api/rss-source/${editId}` : '/api/rss-source';
+            const method = isEdit ? 'PUT' : 'POST';
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ province_id, url, description, is_active })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showStatus(`✅ ${data.message}`, 'success');
+                    resetForm();
+                    loadSources();
+                } else {
+                    showStatus(`❌ ${data.message}`, 'error');
+                }
+            } catch (error) {
+                showStatus(`❌ Gagal menyimpan: ${error.message}`, 'error');
+            }
+        });
+
+        // Delete modal handlers
+        document.getElementById('btnCancelDelete').addEventListener('click', () => {
+            document.getElementById('deleteModal').classList.remove('show');
+            deleteId = null;
+        });
+
+        document.getElementById('btnConfirmDelete').addEventListener('click', deleteSource);
+
+        // Logout
+        document.getElementById('btnLogout').addEventListener('click', async () => {
+            if (!confirm('Apakah Anda yakin ingin logout?')) return;
+
+            try {
+                const response = await fetch('/logout', { method: 'POST' });
+                const data = await response.json();
+
+                if (data.success) {
+                    window.location.href = '/login';
+                }
+            } catch (error) {
+                console.error('Logout failed:', error);
+            }
+        });
+
+        // Load data on page load
+        loadProvinces();
+        loadSources();
+    </script>
+</body>
+
+</html>

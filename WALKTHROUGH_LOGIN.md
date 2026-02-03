@@ -2,31 +2,6 @@
 
 Dokumentasi implementasi fitur autentikasi session-based untuk aplikasi News Scraper.
 
-## ✅ Hasil Implementasi
-
-### File Baru yang Dibuat
-
-| File | Deskripsi |
-|------|-----------|
-| `models/User.js` | Model untuk operasi user dengan bcrypt password verification |
-| `controllers/AuthController.js` | Controller untuk login, logout, dan check auth |
-| `middleware/authMiddleware.js` | Middleware untuk protect routes |
-| `routes/auth.js` | Routes autentikasi |
-| `public/login.html` | Halaman login dengan tema cyber |
-| `setup_users.js` | Script untuk setup tabel users |
-
-### File yang Dimodifikasi
-
-| File | Perubahan |
-|------|-----------|
-| `setup.sql` | Tambah tabel `users` |
-| `config/index.js` | Tambah session config |
-| `index.js` | Tambah express-session middleware |
-| `routes/index.js` | Mount auth routes, protect halaman utama |
-| `public/index.html` | Tambah tombol logout |
-
----
-
 ## 🔐 Kredensial Default
 
 | Field | Value |

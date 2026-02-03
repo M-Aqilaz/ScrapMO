@@ -36,12 +36,14 @@
             <div class="header">
                 <!-- Header Buttons -->
                 <div class="header-buttons">
-                    <a href="/media" class="header-btn" title="Manage Media">
+                    <a href="/rss-source" class="header-btn" title="Manage RSS Source">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
-                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                            <path d="M4 11a9 9 0 0 1 9 9" />
+                            <path d="M4 4a16 16 0 0 1 16 16" />
+                            <circle cx="5" cy="19" r="1" />
                         </svg>
-                        Media
+                        RSS Source
                     </a>
                     <button id="btnLogout" class="header-btn logout-btn" title="Logout">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -59,9 +61,9 @@
             <div class="form-container">
                 <form id="scrapeForm">
                     <div class="form-group">
-                        <label class="form-label">Pilih Media atau Input URL</label>
-                        <select id="mediaSelect" class="cyber-input" style="margin-bottom: 0.5rem;">
-                            <option value="">-- Pilih Media --</option>
+                        <label class="form-label">Pilih RSS Source atau Input URL</label>
+                        <select id="rssSelect" class="cyber-input" style="margin-bottom: 0.5rem;">
+                            <option value="">-- Pilih RSS Source --</option>
                         </select>
                         <input type="url" id="url" class="cyber-input" required placeholder="atau ketik URL manual...">
                     </div>
@@ -317,37 +319,37 @@
 
         document.getElementById('btnLogout').addEventListener('click', logout);
 
-        // Load media for dropdown
-        async function loadMediaDropdown() {
+        // Load RSS sources for dropdown
+        async function loadRssDropdown() {
             try {
-                const response = await fetch('/api/media');
+                const response = await fetch('/api/rss-source/active');
                 const data = await response.json();
 
                 if (data.success && data.data.length > 0) {
-                    const select = document.getElementById('mediaSelect');
-                    select.innerHTML = '<option value="">-- Pilih Media --</option>';
-                    data.data.forEach(media => {
+                    const select = document.getElementById('rssSelect');
+                    select.innerHTML = '<option value="">-- Pilih RSS Source --</option>';
+                    data.data.forEach(source => {
                         const option = document.createElement('option');
-                        option.value = media.url;
-                        option.textContent = media.nama;
+                        option.value = source.url;
+                        option.textContent = source.region + (source.description ? ' - ' + source.description : '');
                         select.appendChild(option);
                     });
                 }
             } catch (error) {
-                console.error('Failed to load media:', error);
+                console.error('Failed to load RSS sources:', error);
             }
         }
 
-        // Media select change handler
-        document.getElementById('mediaSelect').addEventListener('change', (e) => {
+        // RSS select change handler
+        document.getElementById('rssSelect').addEventListener('change', (e) => {
             if (e.target.value) {
                 document.getElementById('url').value = e.target.value;
             }
         });
 
-        // Load stats and media on page load
+        // Load stats and RSS sources on page load
         loadStats();
-        loadMediaDropdown();
+        loadRssDropdown();
     </script>
 </body>
 

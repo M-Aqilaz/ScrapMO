@@ -44,19 +44,22 @@ INSERT INTO users (username, password) VALUES
 ('admin', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi')
 ON CONFLICT (username) DO NOTHING;
 
--- Langkah 7: Buat tabel untuk menyimpan daftar media online
-CREATE TABLE IF NOT EXISTS media_online (
+-- Langkah 7: Buat tabel untuk menyimpan RSS Source
+CREATE TABLE IF NOT EXISTS rss_source (
     id SERIAL PRIMARY KEY,
-    nama VARCHAR(100) NOT NULL,
     url TEXT NOT NULL,
+    region VARCHAR(100) NOT NULL,
+    description TEXT,
+    is_active BOOLEAN DEFAULT FALSE,
+    province_id INTEGER NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Langkah 8: Insert contoh media (opsional)
-INSERT INTO media_online (nama, url) VALUES 
-('Tribunnews Jakarta', 'https://jakarta.tribunnews.com/news'),
-('Detik Jogja', 'https://www.detik.com/jogja/berita'),
-('Kompas', 'https://www.kompas.com/tag/berita-terkini')
+-- Langkah 8: Insert contoh RSS Source
+INSERT INTO rss_source (url, region, description, is_active, province_id) VALUES 
+('https://jakarta.tribunnews.com/news', 'Jakarta', 'Berita Jakarta dari Tribunnews', true, 31),
+('https://www.detik.com/jogja/berita', 'DI Yogyakarta', 'Berita Yogyakarta dari Detik', true, 34),
+('https://aceh.tribunnews.com/news', 'Aceh', 'Berita Aceh dari Tribunnews', false, 11)
 ON CONFLICT DO NOTHING;
 
 -- ============================================
@@ -69,5 +72,9 @@ ON CONFLICT DO NOTHING;
 -- Lihat 10 artikel terbaru:
 -- SELECT * FROM rss_result ORDER BY id DESC LIMIT 10;
 
+-- Lihat RSS Source yang aktif:
+-- SELECT * FROM rss_source WHERE is_active = TRUE ORDER BY region;
+
 -- Hapus semua artikel:
 -- DELETE FROM rss_result;
+

@@ -12,7 +12,7 @@ const HealthController = require('../controllers/HealthController');
 const apiRoutes = require('./api');
 const apiV1Routes = require('./apiV1');
 const authRoutes = require('./auth');
-const mediaRoutes = require('./media');
+const rssSourceRoutes = require('./rssSource');
 const { requireAuth } = require('../middleware/authMiddleware');
 
 // Health check (public)
@@ -25,8 +25,8 @@ router.use('/', authRoutes);
 router.use('/api', apiRoutes);
 router.use('/api/v1', apiV1Routes);
 
-// Media routes (protected)
-router.use('/', mediaRoutes);
+// RSS Source routes (protected)
+router.use('/', rssSourceRoutes);
 
 // Protected routes - halaman utama
 router.get('/', requireAuth, (req, res) => {
@@ -34,3 +34,4 @@ router.get('/', requireAuth, (req, res) => {
 });
 
 module.exports = router;
+
