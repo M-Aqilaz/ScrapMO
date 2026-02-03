@@ -30,5 +30,16 @@ module.exports = {
         max: 10,
         idleTimeoutMillis: 30000,
         connectionTimeoutMillis: 2000
+    },
+
+    // Session config
+    session: {
+        secret: process.env.SESSION_SECRET || 'news-scraper-secret-key-change-in-production',
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 24 * 60 * 60 * 1000 // 24 hours
+        }
     }
 };
