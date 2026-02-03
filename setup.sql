@@ -30,6 +30,35 @@ CREATE TABLE IF NOT EXISTS rss_result (
 CREATE INDEX IF NOT EXISTS idx_rss_result_id 
 ON rss_result(id DESC);
 
+-- Langkah 5: Buat tabel untuk menyimpan data user
+CREATE TABLE IF NOT EXISTS users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Langkah 6: Insert default admin user
+-- Password: admin123 (sudah di-hash dengan bcrypt)
+INSERT INTO users (username, password) VALUES 
+('admin', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi')
+ON CONFLICT (username) DO NOTHING;
+
+-- Langkah 7: Buat tabel untuk menyimpan daftar media online
+CREATE TABLE IF NOT EXISTS media_online (
+    id SERIAL PRIMARY KEY,
+    nama VARCHAR(100) NOT NULL,
+    url TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Langkah 8: Insert contoh media (opsional)
+INSERT INTO media_online (nama, url) VALUES 
+('Tribunnews Jakarta', 'https://jakarta.tribunnews.com/news'),
+('Detik Jogja', 'https://www.detik.com/jogja/berita'),
+('Kompas', 'https://www.kompas.com/tag/berita-terkini')
+ON CONFLICT DO NOTHING;
+
 -- ============================================
 -- Contoh Query yang Berguna
 -- ============================================

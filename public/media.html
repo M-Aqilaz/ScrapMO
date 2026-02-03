@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Online - News Scraper</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap"
+        rel="stylesheet">
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="/css/media.css">
+</head>
+
+<body>
+    <!-- Background Effects -->
+    <div class="cyber-grid"></div>
+    <div class="particles">
+        <div class="particle" style="left: 10%; animation-delay: 0s; animation-duration: 12s;"></div>
+        <div class="particle" style="left: 20%; animation-delay: 2s; animation-duration: 14s;"></div>
+        <div class="particle" style="left: 30%; animation-delay: 4s; animation-duration: 16s;"></div>
+        <div class="particle" style="left: 40%; animation-delay: 1s; animation-duration: 13s;"></div>
+        <div class="particle" style="left: 50%; animation-delay: 3s; animation-duration: 15s;"></div>
+        <div class="particle" style="left: 60%; animation-delay: 5s; animation-duration: 11s;"></div>
+        <div class="particle" style="left: 70%; animation-delay: 2.5s; animation-duration: 17s;"></div>
+        <div class="particle" style="left: 80%; animation-delay: 1.5s; animation-duration: 14s;"></div>
+        <div class="particle" style="left: 90%; animation-delay: 4.5s; animation-duration: 12s;"></div>
+    </div>
+
+    <div class="container">
+        <!-- Main Panel -->
+        <div class="cyber-panel">
+            <div class="header media-header">
+                <div class="header-buttons">
+                    <a href="/" class="nav-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                            <polyline points="9,22 9,12 15,12 15,22" />
+                        </svg>
+                        Home
+                    </a>
+                    <button id="btnLogout" class="nav-btn danger">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" />
+                        </svg>
+                        Logout
+                    </button>
+                </div>
+                <div class="logo-container">
+                    <span class="logo-icon">📡</span>
+                </div>
+                <h1 class="title">Media Online</h1>
+                <p class="subtitle">// MANAGE NEWS SOURCES //</p>
+            </div>
+
+            <!-- Add Form -->
+            <div class="form-container media-form">
+                <form id="mediaForm">
+                    <input type="hidden" id="editId" value="">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Nama Media</label>
+                            <input type="text" id="nama" class="cyber-input" required placeholder="Tribunnews Jakarta">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">URL</label>
+                            <input type="url" id="url" class="cyber-input" required
+                                placeholder="https://jakarta.tribunnews.com/news">
+                        </div>
+                        <button type="submit" id="btnSubmit" class="cyber-btn cyber-btn-primary add-btn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19" />
+                                <line x1="5" y1="12" x2="19" y2="12" />
+                            </svg>
+                            <span id="btnText">Tambah</span>
+                        </button>
+                    </div>
+                </form>
+                <div id="status" class="status-panel"></div>
+            </div>
+        </div>
+
+        <!-- Data Table Panel -->
+        <div class="cyber-panel">
+            <div class="table-container">
+                <div class="panel-header">
+                    <h2 class="panel-title">
+                        <span>📋</span> Daftar Media (<span id="totalCount">0</span>)
+                    </h2>
+                </div>
+
+                <div class="data-table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Nama</th>
+                                <th>URL</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dataTableBody">
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="noDataMessage" class="no-data hidden">
+                    <div class="no-data-icon">📡</div>
+                    <p>Belum ada media terdaftar</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal-overlay">
+        <div class="modal">
+            <h3 class="modal-title">⚠️ Konfirmasi Hapus</h3>
+            <p>Apakah Anda yakin ingin menghapus media "<span id="deleteMediaName"></span>"?</p>
+            <div class="modal-actions">
+                <button id="btnCancelDelete" class="btn-cancel">Batal</button>
+                <button id="btnConfirmDelete" class="cyber-btn cyber-btn-primary"
+                    style="background: linear-gradient(135deg, var(--cyber-red), var(--cyber-pink)); flex: 0;">Hapus</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let deleteId = null;
+
+        function showStatus(message, type = 'success') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = `status-panel show status-${type}`;
+            statusDiv.innerHTML = message;
+            setTimeout(() => {
+                statusDiv.classList.remove('show');
+            }, 3000);
+        }
+
+        async function loadMedia() {
+            try {
+                const response = await fetch('/api/media');
+                const data = await response.json();
+
+                const tableBody = document.getElementById('dataTableBody');
+                const noDataMessage = document.getElementById('noDataMessage');
+                const totalCount = document.getElementById('totalCount');
+
+                totalCount.textContent = data.total || 0;
+
+                if (data.success && data.data.length > 0) {
+                    noDataMessage.classList.add('hidden');
+                    tableBody.innerHTML = data.data.map(media => `
+                        <tr>
+                            <td>${media.nama}</td>
+                            <td><a href="${media.url}" target="_blank">${media.url}</a></td>
+                            <td>
+                                <div class="action-btns">
+                                    <button class="btn-icon btn-edit" onclick="editMedia(${media.id}, '${escapeHtml(media.nama)}', '${escapeHtml(media.url)}')" title="Edit">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                                            <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                        </svg>
+                                    </button>
+                                    <button class="btn-icon btn-delete" onclick="confirmDelete(${media.id}, '${escapeHtml(media.nama)}')" title="Hapus">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="3,6 5,6 21,6"/>
+                                            <path d="M19,6v14a2,2,0,01-2,2H7a2,2,0,01-2-2V6m3,0V4a2,2,0,012-2h4a2,2,0,012,2v2"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tableBody.innerHTML = '';
+                    noDataMessage.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Failed to load media:', error);
+                showStatus(`❌ Gagal memuat data: ${error.message}`, 'error');
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML.replace(/'/g, "\\'");
+        }
+
+        function editMedia(id, nama, url) {
+            document.getElementById('editId').value = id;
+            document.getElementById('nama').value = nama;
+            document.getElementById('url').value = url;
+            document.getElementById('btnText').textContent = 'Update';
+            document.getElementById('nama').focus();
+        }
+
+        function resetForm() {
+            document.getElementById('editId').value = '';
+            document.getElementById('nama').value = '';
+            document.getElementById('url').value = '';
+            document.getElementById('btnText').textContent = 'Tambah';
+        }
+
+        function confirmDelete(id, nama) {
+            deleteId = id;
+            document.getElementById('deleteMediaName').textContent = nama;
+            document.getElementById('deleteModal').classList.add('show');
+        }
+
+        async function deleteMedia() {
+            if (!deleteId) return;
+
+            try {
+                const response = await fetch(`/api/media/${deleteId}`, { method: 'DELETE' });
+                const data = await response.json();
+
+                if (data.success) {
+                    showStatus('✅ Media berhasil dihapus', 'success');
+                    loadMedia();
+                } else {
+                    showStatus(`❌ ${data.message}`, 'error');
+                }
+            } catch (error) {
+                showStatus(`❌ Gagal menghapus: ${error.message}`, 'error');
+            } finally {
+                document.getElementById('deleteModal').classList.remove('show');
+                deleteId = null;
+            }
+        }
+
+        // Form submit
+        document.getElementById('mediaForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const editId = document.getElementById('editId').value;
+            const nama = document.getElementById('nama').value;
+            const url = document.getElementById('url').value;
+
+            const isEdit = editId !== '';
+            const apiUrl = isEdit ? `/api/media/${editId}` : '/api/media';
+            const method = isEdit ? 'PUT' : 'POST';
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nama, url })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showStatus(`✅ ${data.message}`, 'success');
+                    resetForm();
+                    loadMedia();
+                } else {
+                    showStatus(`❌ ${data.message}`, 'error');
+                }
+            } catch (error) {
+                showStatus(`❌ Gagal menyimpan: ${error.message}`, 'error');
+            }
+        });
+
+        // Delete modal handlers
+        document.getElementById('btnCancelDelete').addEventListener('click', () => {
+            document.getElementById('deleteModal').classList.remove('show');
+            deleteId = null;
+        });
+
+        document.getElementById('btnConfirmDelete').addEventListener('click', deleteMedia);
+
+        // Logout
+        document.getElementById('btnLogout').addEventListener('click', async () => {
+            if (!confirm('Apakah Anda yakin ingin logout?')) return;
+
+            try {
+                const response = await fetch('/logout', { method: 'POST' });
+                const data = await response.json();
+
+                if (data.success) {
+                    window.location.href = '/login';
+                }
+            } catch (error) {
+                console.error('Logout failed:', error);
+            }
+        });
+
+        // Load data on page load
+        loadMedia();
+    </script>
+</body>
+
+</html>

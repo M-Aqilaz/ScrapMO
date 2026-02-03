@@ -8,6 +8,7 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const path = require('path');
+const session = require('express-session');
 
 // Load configuration
 const config = require('./config');
@@ -24,10 +25,13 @@ const app = express();
 // Apply middleware
 app.use(cors(config.corsOptions));
 app.use(bodyParser.json());
-app.use(express.static('public'));
+app.use(session(config.session));
 
-// Mount routes
+// Mount routes BEFORE static files (so auth middleware runs first)
 app.use('/', routes);
+
+// Static files for assets (CSS, JS, images) - but not index.html
+app.use(express.static('public', { index: false }));
 
 // Start server
 app.listen(config.PORT, () => {

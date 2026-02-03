@@ -1,0 +1,604 @@
+/* ===========================================
+   MEDIA.CSS - Media Management Page Styles
+   =========================================== */
+
+/* Reset & Variables */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --cyber-black: #0a0a0f;
+    --cyber-dark: #12121a;
+    --cyber-gray: #1a1a2e;
+    --cyber-blue: #00d4ff;
+    --cyber-purple: #9d00ff;
+    --cyber-pink: #ff00a0;
+    --cyber-green: #00ff88;
+    --cyber-yellow: #ffe600;
+    --cyber-red: #ff3366;
+    --glow-blue: 0 0 20px rgba(0, 212, 255, 0.5);
+    --glow-purple: 0 0 20px rgba(157, 0, 255, 0.5);
+    --glow-pink: 0 0 20px rgba(255, 0, 160, 0.5);
+    --glow-green: 0 0 20px rgba(0, 255, 136, 0.5);
+}
+
+body {
+    font-family: 'Rajdhani', sans-serif;
+    background: var(--cyber-black);
+    min-height: 100vh;
+    color: #fff;
+    overflow-x: hidden;
+}
+
+/* ===========================================
+   Background Effects
+   =========================================== */
+.cyber-grid {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+        linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: gridMove 20s linear infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+@keyframes gridMove {
+    0% {
+        transform: perspective(500px) rotateX(60deg) translateY(0);
+    }
+
+    100% {
+        transform: perspective(500px) rotateX(60deg) translateY(50px);
+    }
+}
+
+.particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: var(--cyber-blue);
+    border-radius: 50%;
+    box-shadow: var(--glow-blue);
+    animation: float 15s infinite;
+}
+
+.particle:nth-child(odd) {
+    background: var(--cyber-purple);
+    box-shadow: var(--glow-purple);
+}
+
+.particle:nth-child(3n) {
+    background: var(--cyber-pink);
+    box-shadow: var(--glow-pink);
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 1;
+    }
+
+    90% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(-100vh) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+/* ===========================================
+   Container & Panel
+   =========================================== */
+.container {
+    position: relative;
+    z-index: 10;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.cyber-panel {
+    background: linear-gradient(135deg, rgba(18, 18, 26, 0.95), rgba(26, 26, 46, 0.9));
+    border: 1px solid rgba(157, 0, 255, 0.3);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+}
+
+.cyber-panel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--cyber-purple), var(--cyber-pink), var(--cyber-blue), transparent);
+    animation: scanline 3s linear infinite;
+}
+
+@keyframes scanline {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* ===========================================
+   Header
+   =========================================== */
+.header {
+    text-align: center;
+    padding: 2rem;
+    position: relative;
+}
+
+.header-buttons {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    z-index: 100;
+}
+
+.nav-btn {
+    background: transparent;
+    border: 1px solid var(--cyber-blue);
+    color: var(--cyber-blue);
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.nav-btn:hover {
+    background: rgba(0, 212, 255, 0.1);
+    box-shadow: var(--glow-blue);
+}
+
+.nav-btn.danger {
+    border-color: var(--cyber-red);
+    color: var(--cyber-red);
+}
+
+.nav-btn.danger:hover {
+    background: rgba(255, 51, 102, 0.1);
+    box-shadow: 0 0 15px rgba(255, 51, 102, 0.5);
+}
+
+.logo-container {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, var(--cyber-dark), var(--cyber-gray));
+    border: 2px solid var(--cyber-purple);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    box-shadow: var(--glow-purple), inset 0 0 20px rgba(157, 0, 255, 0.1);
+}
+
+.logo-icon {
+    font-size: 2rem;
+    filter: drop-shadow(0 0 10px var(--cyber-purple));
+}
+
+.title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    background: linear-gradient(90deg, var(--cyber-purple), var(--cyber-pink), var(--cyber-blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    font-family: 'Share Tech Mono', monospace;
+    color: rgba(157, 0, 255, 0.7);
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+}
+
+/* ===========================================
+   Form
+   =========================================== */
+.form-container {
+    padding: 0 2rem 2rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 2fr auto;
+    gap: 1rem;
+    align-items: end;
+}
+
+.form-group {
+    margin-bottom: 0;
+}
+
+.form-label {
+    display: block;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--cyber-purple);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.cyber-input {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(157, 0, 255, 0.3);
+    border-radius: 4px;
+    color: #fff;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.cyber-input:focus {
+    border-color: var(--cyber-purple);
+    box-shadow: var(--glow-purple), inset 0 0 20px rgba(157, 0, 255, 0.1);
+}
+
+.cyber-input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+/* ===========================================
+   Buttons
+   =========================================== */
+.cyber-btn {
+    padding: 0.8rem 1.5rem;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+}
+
+.cyber-btn-primary {
+    background: linear-gradient(135deg, var(--cyber-purple), var(--cyber-pink));
+    color: #fff;
+    box-shadow: var(--glow-purple);
+}
+
+.cyber-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 30px rgba(157, 0, 255, 0.7), 0 0 60px rgba(255, 0, 160, 0.4);
+}
+
+.cyber-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* ===========================================
+   Status Panel
+   =========================================== */
+.status-panel {
+    margin-top: 1rem;
+    padding: 1rem 1.5rem;
+    border-radius: 4px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.9rem;
+    display: none;
+    border: 1px solid;
+}
+
+.status-panel.show {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.status-success {
+    background: rgba(0, 255, 136, 0.1);
+    border-color: var(--cyber-green);
+    color: var(--cyber-green);
+}
+
+.status-error {
+    background: rgba(255, 51, 102, 0.1);
+    border-color: var(--cyber-red);
+    color: var(--cyber-red);
+}
+
+/* ===========================================
+   Data Table
+   =========================================== */
+.table-container {
+    padding: 1.5rem 2rem 2rem;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(157, 0, 255, 0.2);
+}
+
+.panel-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1rem;
+    color: var(--cyber-purple);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.data-table-container {
+    max-height: 400px;
+    overflow-y: auto;
+    border-radius: 4px;
+}
+
+.data-table-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.data-table-container::-webkit-scrollbar-track {
+    background: var(--cyber-dark);
+}
+
+.data-table-container::-webkit-scrollbar-thumb {
+    background: var(--cyber-purple);
+    border-radius: 3px;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table th {
+    position: sticky;
+    top: 0;
+    background: var(--cyber-gray);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--cyber-purple);
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 2px solid var(--cyber-purple);
+}
+
+.data-table td {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(157, 0, 255, 0.1);
+    font-family: 'Rajdhani', sans-serif;
+}
+
+.data-table tr:hover td {
+    background: rgba(157, 0, 255, 0.05);
+}
+
+.data-table a {
+    color: var(--cyber-blue);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.data-table a:hover {
+    color: var(--cyber-pink);
+    text-shadow: 0 0 10px var(--cyber-pink);
+}
+
+/* Action Buttons */
+.action-btns {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-icon {
+    background: transparent;
+    border: 1px solid;
+    padding: 0.4rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-edit {
+    border-color: var(--cyber-yellow);
+    color: var(--cyber-yellow);
+}
+
+.btn-edit:hover {
+    background: rgba(255, 230, 0, 0.1);
+    box-shadow: 0 0 10px rgba(255, 230, 0, 0.5);
+}
+
+.btn-delete {
+    border-color: var(--cyber-red);
+    color: var(--cyber-red);
+}
+
+.btn-delete:hover {
+    background: rgba(255, 51, 102, 0.1);
+    box-shadow: 0 0 10px rgba(255, 51, 102, 0.5);
+}
+
+/* No Data */
+.no-data {
+    text-align: center;
+    padding: 3rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.no-data-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+/* ===========================================
+   Modal
+   =========================================== */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-overlay.show {
+    display: flex;
+}
+
+.modal {
+    background: linear-gradient(135deg, var(--cyber-dark), var(--cyber-gray));
+    border: 1px solid var(--cyber-purple);
+    border-radius: 8px;
+    padding: 2rem;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: var(--glow-purple);
+}
+
+.modal-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.2rem;
+    color: var(--cyber-purple);
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    justify-content: flex-end;
+}
+
+.btn-cancel {
+    background: transparent;
+    border: 1px solid var(--cyber-gray);
+    color: #888;
+    padding: 0.8rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Share Tech Mono', monospace;
+}
+
+.btn-cancel:hover {
+    border-color: var(--cyber-red);
+    color: var(--cyber-red);
+}
+
+/* ===========================================
+   Utilities
+   =========================================== */
+.hidden {
+    display: none !important;
+}
+
+/* ===========================================
+   Responsive
+   =========================================== */
+@media (max-width: 640px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .header-buttons {
+        position: static;
+        justify-content: center;
+        margin-bottom: 1rem;
+    }
+
+    .title {
+        font-size: 1.4rem;
+    }
+}
